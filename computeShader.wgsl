@@ -7,29 +7,42 @@ struct MyBuffer {
 
 @group(0) @binding(1) var<storage, read_write> myBuffer : MyBuffer;
 
+@group(0) @binding(2) var<storage, read_write> iterationArray : array<i32>;
 
-fn calc(cX : f32, cY : f32, approx : f32) -> i32
+
+fn calc(x0 : f32, y0 : f32, approx : f32) -> f32
 {
-    var zx : f32 = 0.0;
-    var zy : f32 = 0.0;
-    var iteration : i32 = 0;
+    var x : f32 = 0.0;
+    var y : f32 = 0.0;
+    var iteration : f32 = 0;
     var zx2 : f32 = 0.0;
     var zy2 : f32 = 0.0;
-    var max_iteration : i32 = 1000;
-    var xold : f32 = 0.0;
-    var yold : f32 = 0.0;
-    var period : i32 = 0;
+    var max_iteration : f32 = f32(iterationArray[0]);
+    //var xold : f32 = 0.0;
+    //var yold : f32 = 0.0;
+    //var period : i32 = 0;
 
     loop {
         if !(zx2 + zy2 <= 4.0 && iteration < max_iteration)
         {
             break;
         }
-        zy = (zx + zx) * zy + cX;
-        zx = zx2 - zy2 + cY;
-        zx2 = zx * zx;
-        zy2 = zy * zy;
-        iteration++;
+        var xtemp : f32 = zx2 - zy2 + x0;
+        y = 2 * x * y + y0;
+        x = xtemp;
+        //zy = (zx + zx) * zy + cX;
+        //zx = zx2 - zy2 + cY;
+        zx2 = x * x;
+        zy2 = y * y;
+        iteration = iteration + 1;
+    }
+
+    if (iteration < max_iteration) 
+    {
+        var log_zn : f32 = log(zx2 + zy2) / 2;
+        var nu : f32 = log(log_zn / log(2)) / log(2);
+
+        iteration = iteration + 1 - nu;
     }
 
     return iteration;

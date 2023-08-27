@@ -1,33 +1,79 @@
 import { initializeShader, runShader } from "./compute.js";
 import { render } from "./renderer.js";
-import {maxIterations} from "./index.js";
+import { maxIterations } from "./slider.js";
 
-async function main() {
-  const metaData = {
-    pixelWidth: 2560,
-    pixelHeight: 1440,
-  };
+const rangeData = {
+  x0: -1.8,
+  y0: -1,
+  x1: 1.8,
+  y1: 1,
+};
 
-  const centerX = -0.8885416810711224;
-  const centerY = -0.10506944739156299;
-  const magnification = 1 / 0.05;
+let magnification = 2;
+
+let iterationCount = 1000;
+
+const metaData = {
+  pixelWidth: 2560,
+  pixelHeight: 1440,
+};
+
+window.addEventListener("load", function (event) {
+  runRenderer(0, 0);
+});
+
+export function setIterationCount(count) {
+  iterationCount = count;
+}
+
+export function run(relativeCenter, relativeMagnification) {
+  const centerX =
+    rangeData.x0 + (rangeData.x1 - rangeData.x0) * relativeCenter.x;
+  const centerY =
+    rangeData.y0 + (rangeData.y1 - rangeData.y0) * relativeCenter.y;
+
   const range = 1.7;
-  const lowerX = centerX - range / magnification;
-  const upperX = centerX + range / magnification;
-  const lowerY =
+
+  magnification = magnification * Math.pow(2, relativeMagnification);;
+
+  rangeData.x0 = centerX - range / magnification;
+  rangeData.x1 = centerX + range / magnification;
+  rangeData.y0 =
     centerY -
     (range * (metaData.pixelHeight / metaData.pixelWidth)) / magnification;
-  const upperY =
+  rangeData.y1 =
     centerY +
     (range * (metaData.pixelHeight / metaData.pixelWidth)) / magnification;
 
-  const rangeData = {
-    x0: lowerX,
-    y0: lowerY,
-    x1: upperX,
-    y1: upperY,
-  };
 
+  runRenderer();
+}
+
+async function runRenderer(centerX, centerY) {
+  const canvas = document.querySelector("#display");
+  const context = canvas.getContext("2d");
+
+  // const range = 1.7;
+
+  // rangeData.x0 = centerX - range / magnification;
+  // rangeData.x1 = centerX + range / magnification;
+  // rangeData.y0 =
+  //   centerY -
+  //   (range * (metaData.pixelHeight / metaData.pixelWidth)) / magnification;
+  // rangeData.y1 =
+  //   centerY +
+  //   (range * (metaData.pixelHeight / metaData.pixelWidth)) / magnification;
+
+  const unrolledCoords = unrollCoordinates(metaData, rangeData);
+
+  await initializeShader();
+  let iterationsData = await runShader(unrolledCoords, iterationCount);
+  let colorData = getColors2(iterationsData);
+  //colorData = getColors(calculateHistogram(iterationsData));
+  render(canvas, context, metaData, colorData);
+}
+
+function unrollCoordinates(metaData, rangeData) {
   const unrolledDataLength = metaData.pixelHeight * metaData.pixelWidth;
   const unrolledCoords = new Float32Array(2 * unrolledDataLength);
   for (let i = 0; i < unrolledDataLength; i++) {
@@ -40,19 +86,79 @@ async function main() {
     unrolledCoords[2 * i] = indexCoordinates.x;
     unrolledCoords[2 * i + 1] = indexCoordinates.y;
   }
+  return unrolledCoords;
+}
 
-  await initializeShader();
-  let iterationsData = await runShader(unrolledCoords);
-  const newData = getColors(iterationsData);
-  const colorData = new Uint8ClampedArray(iterationsData.length * 4);
-  const renderColor = { r: 50, g: 150, b: 255 };
-  for (let i = 0; i < iterationsData.length; i++) {
-    colorData[4 * i] = renderColor.r * newData[i];
-    colorData[4 * i + 1] = renderColor.g * newData[i];
-    colorData[4 * i + 2] = renderColor.b * newData[i];
+function getColors2(newData) {
+  const colorData = new Uint8ClampedArray(newData.length * 4);
+  let max = 0;
+  const lerpedIters = new Float32Array(newData.length);
+  for(let i = 0; i < newData.length; i++) {
+    const l1 = Math.floor(newData[i]);
+    const l2 = Math.floor(newData[i] + 1);
+    lerpedIters[i] = lerp(l1, l2, newData[i] % 1);
+    if(lerpedIters[i] > max && lerpedIters[i] < 999) {
+      console.log(lerpedIters[i]);
+      max = lerpedIters[i];
+    }
+    if(newData[i] === 1000) lerpedIters[i] = 0;
+  }
+  const cycle = 50;
+  for(let i = 0; i < lerpedIters.length; i++) {
+    const color = hslToRgb(0.54, 1, 0.9 * (lerpedIters[i] % cycle) / cycle);
+    
+    colorData[4 * i] = color.r;
+    colorData[4 * i + 1] = color.g;
+    colorData[4 * i + 2] = color.b;
     colorData[4 * i + 3] = 255;
   }
-  render(metaData, colorData);
+
+  return colorData;
+}
+
+function lerp(a, b, t) {
+  return a + t * (b - a);
+}
+
+function getColors(newData) {
+  const colorData = new Uint8ClampedArray(newData.length * 4);
+  for (let i = 0; i < newData.length; i++) {
+    const rgb = hslToRgb(0.54, 1, 0.9 * newData[i]);
+    colorData[4 * i] = rgb.r;
+    colorData[4 * i + 1] = rgb.g;
+    colorData[4 * i + 2] = rgb.b;
+    colorData[4 * i + 3] = 255;
+  }
+  return colorData;
+}
+
+function hslToRgb(h, s, l) {
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hueToRgb(p, q, h + 1 / 3);
+    g = hueToRgb(p, q, h);
+    b = hueToRgb(p, q, h - 1 / 3);
+  }
+
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255),
+  };
+}
+
+function hueToRgb(p, q, t) {
+  if (t < 0) t += 1;
+  if (t > 1) t -= 1;
+  if (t < 1 / 6) return p + (q - p) * 6 * t;
+  if (t < 1 / 2) return q;
+  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+  return p;
 }
 
 function getCoordinatesForIndex(
@@ -74,11 +180,11 @@ function getCoordinatesForIndex(
   return { x, y };
 }
 
-function getColors(pixelIters) {
+function calculateHistogram(pixelIters) {
   const histogram = Array(pixelIters.length).fill(0);
   for (let i = 0; i < histogram.length; i++) {
     let index = pixelIters[i];
-    if (index !== 1000) {
+    if (index !== iterationCount) {
       histogram[index] += 1;
     }
   }
@@ -96,10 +202,12 @@ function getColors(pixelIters) {
   for (let i = 0; i < pixelIters.length; i++) {
     const iteration = pixelIters[i];
     setColor[i] = divdHist[iteration];
-    if (iteration === 1000) setColor[i] = 0;
+    if (iteration === iterationCount) {
+      setColor[i] = 0;
+    }
   }
 
   return setColor;
 }
 
-main();
+//runRenderer();

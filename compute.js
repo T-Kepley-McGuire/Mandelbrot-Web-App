@@ -1,5 +1,3 @@
-const BUFFER_SIZE = 1000;
-
 let device = null;
 let shaderModule = null;
 
@@ -23,7 +21,7 @@ export async function initializeShader() {
   });
 }
 
-export async function runShader(rawInputs) {
+export async function runShader(rawInputs, iterationCount) {
   if (!device || !shaderModule)
     throw Error("Initialize shader before executing");
   if (!rawInputs instanceof Float32Array)
@@ -49,6 +47,12 @@ export async function runShader(rawInputs) {
     usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
   });
 
+  const iterationBuffer = device.createBuffer({
+    size: Int32Array.BYTES_PER_ELEMENT,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(iterationBuffer, 0, new Int32Array([iterationCount]));
+
   const bindGroupLayout = device.createBindGroupLayout({
     entries: [
       {
@@ -60,6 +64,13 @@ export async function runShader(rawInputs) {
       },
       {
         binding: 1,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
+          type: "storage",
+        },
+      },
+      {
+        binding: 2,
         visibility: GPUShaderStage.COMPUTE,
         buffer: {
           type: "storage",
@@ -83,6 +94,12 @@ export async function runShader(rawInputs) {
           buffer: input,
         },
       },
+      {
+        binding: 2,
+        resource: {
+          buffer: iterationBuffer
+        }
+      }
     ],
   });
 
@@ -138,9 +155,6 @@ export async function runShader(rawInputs) {
 
   const copyArrayBuffer = stagingBuffer.getMappedRange(0, outputSize);
   const data = copyArrayBuffer.slice();
-
   stagingBuffer.unmap();
-  return new Int32Array(new Float32Array(data));
-  console.log(integerData);
   return new Float32Array(data);
 }

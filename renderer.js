@@ -1,10 +1,8 @@
-export async function render({ pixelWidth, pixelHeight }, pixelArray) {
+export async function render(canvas, context, { pixelWidth, pixelHeight }, pixelArray) {
   if (!(pixelArray instanceof Uint8ClampedArray)) {
     throw Error("pixel array must be of type Uint8ClampedArray");
   }
-  const canvas = document.querySelector("#display");
-  const container = document.querySelector("#display-container");
-  const context = canvas.getContext("2d");
+  
 
   // Initialize a new ImageData object
   const imageData = new ImageData(pixelArray, pixelWidth, pixelHeight);
@@ -12,9 +10,12 @@ export async function render({ pixelWidth, pixelHeight }, pixelArray) {
   const imageBitmap = await createImageBitmap(imageData);
 
   // Draw image data to the canvas
-  const width = container.clientWidth;
-  canvas.width = width;
-  canvas.height = (width * pixelHeight) / pixelWidth;
+  const width =  canvas.width; //container.clientWidth;
+  //canvas.width = width;
+  //canvas.height = (width * pixelHeight) / pixelWidth;
+  // context.translate( canvas.width / 2, canvas.height / 2 ); 
+  // context.rotate( Math.PI / 2 );
+  // context.translate( -canvas.width / 2, -canvas.height / 2 ); 
 
   context.drawImage(
     imageBitmap,

@@ -1,31 +1,17 @@
+import { resetZoom, zoom } from "./zoomer.js"
+import { crosshairCoordinates, resetLocator } from "./locator.js"
+import { run } from "./rendererParent.js"
 
-let slider = document.getElementById("iterationslider");
-let output = document.getElementById("iterationdisplay");
-export let maxIterations = 1000;
-const mid = slider.value;
-output.innerHTML = maxIterations;
+window.addEventListener("load", (event) => {
+    const goButton = document.querySelector("#go");
 
-slider.onchange = function() {
-    const delta = this.value - mid;
-    if(delta < 0) {
-        maxIterations = maxIterations / (1 + Math.abs(delta));
-        
-    } else if (delta > 0) {
-        maxIterations = maxIterations * (1 + Math.abs(delta));
-    }
-    
-    this.value = mid;
-    output.innerHTML = Math.round(maxIterations);
-}
-
-slider.oninput = function() {
-    const delta = this.value - mid;
-    let temp = maxIterations;
-    if(delta < 0) {
-        temp = maxIterations / (1 + Math.abs(delta));
-    } else if(delta > 0) {
-        temp = maxIterations * (1 + Math.abs(delta));
-    }
-
-    output.innerHTML = Math.round(temp);
-}
+    goButton.addEventListener("click", (event) => {
+        // THIS FUNCTION SHOULD RESET THE LOCATOR,
+        // RESET THE ZOOM, AND RELOAD THE SET
+        console.log(crosshairCoordinates, zoom);
+        run(crosshairCoordinates, zoom);
+        resetZoom();
+        resetLocator();
+        //reloadSet();
+    })
+});

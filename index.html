@@ -21,6 +21,8 @@
     <script src="rendererParent.js" type="module"></script>
     <script src="compute.js" type="module"></script>
     <script src="renderer.js" type="module"></script>
+    <script src="zoomer.js" type="module"></script>
+    <script src="slider.js" type="module"></script>
     <script src="index.js" type="module"></script>
   </head>
 
@@ -33,29 +35,45 @@
 
     <div class="row p-3"></div>
     <div class="row bg-gradient-dark justify-content-center">
-      <div class="col-2 p-1 btn-container">
-        <button class="btn btn-primary control">Zoom</button>
-        <button class="btn btn-primary control">Save as Picture</button>
-        <button class="btn btn-primary control">Increase Iterations</button>
-        <div class="slidercontainer control">
-          <input
-            type="range"
-            min="-9"
-            max="9"
-            value="0"
-            class="slider"
-            id="iterationslider"
-          />
-          <p>Iterations: <span id="iterationdisplay"></span></p>
+      <div class="col-2 p-1 d-flex flex-column justify-content-between">
+        <!-- <button class="btn btn-primary control" id="zoom">Zoom</button> -->
+        <div>
+          <div class="slider-container control">
+            <p>Zoom level: <span id="zoomdisplay"></span></p>
+            <input
+              type="range"
+              min="-5"
+              max="5"
+              value="2"
+              class="slider"
+              id="zoomslider"
+            />
+          </div>
+          <!-- <button class="btn btn-primary control">Increase Iterations</button> -->
+          <div class="slider-container control">
+            <p>Iterations: <span id="iterationdisplay"></span></p>
+            <input
+              type="range"
+              min="-9"
+              max="9"
+              value="0"
+              class="slider"
+              id="iterationslider"
+            />
+          </div>
         </div>
-        <p>
-          This is where the controls go. I'm hoping for screenshot button,
-          render button, change zoom, reset, etc.
-        </p>
+        <div>
+          <button class="btn btn-success control ctrl-big" id="go">Go</button>
+          <button class="btn btn-primary control">Save as Picture</button>
+        </div>
       </div>
       <div class="col-8">
-        <div class="p-5 rounded bg-dark" id="display-container">
-          <canvas id="display" width="1800" height="1000"></canvas>
+        <div class="p-5 rounded bg-dark" id="display-surrounder">
+          <div id="display-container">
+            <script src="locator.js" type="module"></script>
+            <canvas id="locator" width="1800" height="1000"></canvas>
+            <canvas id="display" width="1800" height="1000"></canvas>
+          </div>
         </div>
       </div>
     </div>
