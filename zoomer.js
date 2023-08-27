@@ -1,6 +1,3 @@
-import { crosshairCoordinates, resetLocator } from "./locator.js";
-import { run } from "./rendererParent.js"
-
 export let zoom = 2;
 
 window.addEventListener("load", () => { 

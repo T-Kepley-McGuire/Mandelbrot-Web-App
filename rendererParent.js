@@ -1,6 +1,5 @@
 import { initializeShader, runShader } from "./compute.js";
 import { render } from "./renderer.js";
-import { maxIterations } from "./slider.js";
 
 const rangeData = {
   x0: -1.8,
