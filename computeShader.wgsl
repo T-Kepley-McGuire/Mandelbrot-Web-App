@@ -40,9 +40,10 @@ fn calc(x0 : f32, y0 : f32, approx : f32) -> f32
     if (iteration < max_iteration) 
     {
         var log_zn : f32 = log(zx2 + zy2) / 2;
-        var nu : f32 = log(log_zn / log(2)) / log(2);
+        var nu : f32 = log(log_zn) / log(2);
 
         iteration = iteration + 1 - nu;
+        iteration = iteration / max_iteration * 255;
     }
 
     return iteration;

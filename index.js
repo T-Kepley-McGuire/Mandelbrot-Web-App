@@ -8,10 +8,12 @@ window.addEventListener("load", (event) => {
     goButton.addEventListener("click", (event) => {
         // THIS FUNCTION SHOULD RESET THE LOCATOR,
         // RESET THE ZOOM, AND RELOAD THE SET
-        console.log(crosshairCoordinates, zoom);
-        run(crosshairCoordinates, zoom);
-        resetZoom();
-        resetLocator();
-        //reloadSet();
+        go();
     })
 });
+
+export function go() {
+    run(crosshairCoordinates, zoom);
+    resetZoom();
+    resetLocator();
+}

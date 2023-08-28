@@ -23,6 +23,7 @@
     <script src="renderer.js" type="module"></script>
     <script src="zoomer.js" type="module"></script>
     <script src="slider.js" type="module"></script>
+    <script src="readout.js" type="module"></script>
     <script src="index.js" type="module"></script>
   </head>
 
@@ -36,7 +37,6 @@
     <div class="row p-3"></div>
     <div class="row bg-gradient-dark justify-content-center">
       <div class="col-2 p-1 d-flex flex-column justify-content-between">
-        <!-- <button class="btn btn-primary control" id="zoom">Zoom</button> -->
         <div>
           <div class="slider-container control">
             <p>Zoom level: <span id="zoomdisplay"></span></p>
@@ -44,12 +44,11 @@
               type="range"
               min="-5"
               max="5"
-              value="2"
+              value="0"
               class="slider"
               id="zoomslider"
             />
           </div>
-          <!-- <button class="btn btn-primary control">Increase Iterations</button> -->
           <div class="slider-container control">
             <p>Iterations: <span id="iterationdisplay"></span></p>
             <input
@@ -60,6 +59,7 @@
               class="slider"
               id="iterationslider"
             />
+            <p class="info">If the image loses detail or there is too much white, increase the number of iterations</p>
           </div>
         </div>
         <div>
@@ -68,12 +68,13 @@
         </div>
       </div>
       <div class="col-8">
-        <div class="p-5 rounded bg-dark" id="display-surrounder">
+        <div class="px-5 pt-5 pb-1 rounded bg-dark" id="display-surrounder">
           <div id="display-container">
             <script src="locator.js" type="module"></script>
             <canvas id="locator" width="1800" height="1000"></canvas>
             <canvas id="display" width="1800" height="1000"></canvas>
           </div>
+          <p class="info dark mt-1" id="displayreadout"></p>
         </div>
       </div>
     </div>

@@ -29,6 +29,14 @@ canvas {
   width: 100%;
 }
 
+.info {
+  font-size: medium;
+}
+
+.dark {
+  color: lightgray;
+}
+
 #display-container {
   position: relative;
 }

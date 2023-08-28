@@ -10,7 +10,7 @@ window.addEventListener("load", () => {
 
   drawCrosshair(canvas, context);
 
-  canvas.addEventListener("mousemove", function (event) {
+  canvas.addEventListener("mousemove", (event) => {
     let { x, y } = getMousePosNormalized(canvas, event);
     const width = canvas.width;
     const height = canvas.height;
@@ -30,12 +30,12 @@ window.addEventListener("load", () => {
     drawCrosshair(canvas, context);
   });
 
-  canvas.addEventListener("mouseout", function (event) {
+  canvas.addEventListener("mouseout", (event) => {
     context.clearRect(0, 0, canvas.width, canvas.height);
     drawCrosshair(canvas, context);
   });
 
-  canvas.addEventListener("click", function (event) {
+  canvas.addEventListener("click", (event) => {
     crosshairCoordinates = getMousePosNormalized(canvas, event);
   });
 });
@@ -65,6 +65,8 @@ function drawCrosshair(canvas, context) {
 
 function getMousePosNormalized(canvas, evt) {
   const rect = canvas.getBoundingClientRect(); // abs. size of element
+  canvas.width = rect.width;
+  canvas.height = rect.height;
   return {
     x: (evt.clientX - rect.left) / canvas.width, // scale mouse coordinates after they have
     y: (evt.clientY - rect.top) / canvas.height, // been adjusted to be relative to element

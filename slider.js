@@ -1,4 +1,5 @@
-import { setIterationCount } from "./rendererParent.js";
+import { go } from "./index.js";
+import { run, setIterationCount } from "./rendererParent.js";
 
 let slider = document.getElementById("iterationslider");
 let output = document.getElementById("iterationdisplay");
@@ -18,6 +19,7 @@ slider.onchange = function() {
     this.value = mid;
     output.innerHTML = Math.round(maxIterations);
     setIterationCount(maxIterations);
+    run({x: 0.5, y: 0.5}, 0);
 }
 
 slider.oninput = function() {

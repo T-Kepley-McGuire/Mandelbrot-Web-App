@@ -1,4 +1,4 @@
-export let zoom = 2;
+export let zoom = 0;
 
 window.addEventListener("load", () => { 
     let zoomslider = document.getElementById("zoomslider");
