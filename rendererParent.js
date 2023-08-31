@@ -18,6 +18,10 @@ const metaData = {
   pixelHeight: 1440,
 };
 
+let color = {h: 0.54, s: 1, l: 0.5};
+
+let iterationsData;
+
 window.addEventListener("load", function (event) {
   run();
 });
@@ -26,9 +30,15 @@ export function setIterationCount(count) {
   iterationCount = count;
 }
 
-export function run(relativeCenter, relativeMagnification) {
+export function setColor(newColor) {
+  if(newColor) color = newColor;
+  
+  runRenderer();
+}
+
+export async function run(relativeCenter, relativeMagnification) {
   if(!relativeCenter || !relativeCenter.x) relativeCenter = {x: 0.5, y: 0.5}
-  if(!relativeMagnification) relativeMagnification = 0;
+  if(!relativeMagnification) relativeMagnification = 0; 
   const centerX =
     rangeData.x0 + (rangeData.x1 - rangeData.x0) * relativeCenter.x;
   const centerY =
@@ -47,31 +57,20 @@ export function run(relativeCenter, relativeMagnification) {
     centerY +
     (range * (metaData.pixelHeight / metaData.pixelWidth)) / magnification;
 
+  const unrolledCoords = unrollCoordinates(metaData, rangeData);
+
+  await initializeShader();
+  iterationsData = await runShader(unrolledCoords, iterationCount);
   runRenderer();
   printInformation(magnification, {x: centerX, y: centerY}, iterationCount);
 }
 
-async function runRenderer() {
+function runRenderer() {
   const canvas = document.querySelector("#display");
   const context = canvas.getContext("2d");
 
-  // const range = 1.7;
-
-  // rangeData.x0 = centerX - range / magnification;
-  // rangeData.x1 = centerX + range / magnification;
-  // rangeData.y0 =
-  //   centerY -
-  //   (range * (metaData.pixelHeight / metaData.pixelWidth)) / magnification;
-  // rangeData.y1 =
-  //   centerY +
-  //   (range * (metaData.pixelHeight / metaData.pixelWidth)) / magnification;
-
-  const unrolledCoords = unrollCoordinates(metaData, rangeData);
-
-  await initializeShader();
-  let iterationsData = await runShader(unrolledCoords, iterationCount);
   const colorData = getColors(iterationsData, iterationCount);
-  //const colorData = getColors(continuousHistogram(iterationsData));
+  
   render(canvas, context, metaData, colorData);
 }
 
@@ -104,11 +103,11 @@ function getColors(newData, iterationCount) {
   for (let i = 0; i < lerpedIters.length; i++) {
     let l = (newData[i] % cycle) / cycle;
 
-    const color = hslToRgb(0.54, 1, (1.1 * lerpedIters[i]) / cycle);
+    const c = hslToRgb(color.h, color.s, (1.1 * lerpedIters[i]) / cycle);
 
-    colorData[4 * i] = color.r;
-    colorData[4 * i + 1] = color.g;
-    colorData[4 * i + 2] = color.b;
+    colorData[4 * i] = c.r;
+    colorData[4 * i + 1] = c.g;
+    colorData[4 * i + 2] = c.b;
     colorData[4 * i + 3] = 255;
   }
 

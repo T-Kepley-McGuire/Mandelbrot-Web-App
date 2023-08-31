@@ -15,7 +15,7 @@ export function printInformation(magnification, center, maxIterations) {
     `<div class="d-flex flex-row justify-content-around">
       <p>Magnification: ${magnification}</p>
       <p>
-        Center: ${components.x[0].substring(0, 5) + "e" + components.x[1]}, ${components.y[0].substring(0, 5) + "e" + components.y[1]}
+        Center: ${components.x[0].substring(0, 10) + "e" + components.x[1]}, ${components.y[0].substring(0, 10) + "e" + components.y[1]}
       </p>
       <p>Escape Iterations: ${maxIterations}</p>
     </div>`

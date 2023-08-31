@@ -24,6 +24,7 @@
     <script src="zoomer.js" type="module"></script>
     <script src="slider.js" type="module"></script>
     <script src="readout.js" type="module"></script>
+    <script src="colorPicker.js" type="module"></script>
     <script src="index.js" type="module"></script>
   </head>
 
@@ -38,7 +39,7 @@
     <div class="row bg-gradient-dark justify-content-center">
       <div class="col-2 p-1 d-flex flex-column justify-content-between">
         <div>
-          <div class="slider-container control">
+          <div class="buttonless-container control">
             <p>Zoom level: <span id="zoomdisplay"></span></p>
             <input
               type="range"
@@ -49,7 +50,7 @@
               id="zoomslider"
             />
           </div>
-          <div class="slider-container control">
+          <div class="buttonless-container control">
             <p>Iterations: <span id="iterationdisplay"></span></p>
             <input
               type="range"
@@ -59,12 +60,20 @@
               class="slider"
               id="iterationslider"
             />
-            <p class="info">If the image loses detail or there is too much white, increase the number of iterations</p>
+            <p class="info">
+              If the image loses detail or there is too much white, increase the
+              number of iterations
+            </p>
+          </div>
+          <div class="buttonless-container color-container control">
+            <input type="color" id="colorcontrol" />
+            <p>Render Color</p>
           </div>
         </div>
         <div>
-          <button class="btn btn-success control ctrl-big" id="go">Go</button>
           <button class="btn btn-primary control">Save as Picture</button>
+          <button class="btn btn-success control ctrl-big" id="go">Go</button>
+          <button class="btn btn-secondary control" id="reset">Reset</button>
         </div>
       </div>
       <div class="col-8">
