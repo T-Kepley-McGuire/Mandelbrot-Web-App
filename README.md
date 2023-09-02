@@ -1,6 +1,8 @@
 # Mandelbrot-Web-App
 A rendering engine for the Mandelbrot Set built for the web.
 
+*Built by T. Kepley McGuire*
+
 Runs locally to calculate and render the Mandelbrot Set using the GPU
 
 ## About
