@@ -18,7 +18,7 @@ const metaData = {
   pixelHeight: 1440,
 };
 
-let color = {h: 0.54, s: 1, l: 0.5};
+let color = { h: 0.54, s: 1, l: 0.5 };
 
 let iterationsData;
 
@@ -31,14 +31,26 @@ export function setIterationCount(count) {
 }
 
 export function setColor(newColor) {
-  if(newColor) color = newColor;
-  
-  runRenderer();
+  if (newColor) color = newColor;
+
+  if(iterationsData) runRenderer();
+}
+
+export function resetView() {
+  iterationCount = 1000;
+  magnification = 1;
+  rangeData.x0 = -2.2;
+  rangeData.y0 = -1;
+  rangeData.x1 = 1.4;
+  rangeData.y1 = 1;
+
+  console.log(rangeData);
+  run({x: 0, y: 0});
 }
 
 export async function run(relativeCenter, relativeMagnification) {
-  if(!relativeCenter || !relativeCenter.x) relativeCenter = {x: 0.5, y: 0.5}
-  if(!relativeMagnification) relativeMagnification = 0; 
+  if (!relativeCenter || !relativeCenter.x) relativeCenter = { x: 0.5, y: 0.5 };
+  if (!relativeMagnification) relativeMagnification = 0;
   const centerX =
     rangeData.x0 + (rangeData.x1 - rangeData.x0) * relativeCenter.x;
   const centerY =
@@ -62,7 +74,7 @@ export async function run(relativeCenter, relativeMagnification) {
   await initializeShader();
   iterationsData = await runShader(unrolledCoords, iterationCount);
   runRenderer();
-  printInformation(magnification, {x: centerX, y: centerY}, iterationCount);
+  printInformation(magnification, { x: centerX, y: centerY }, iterationCount);
 }
 
 function runRenderer() {
@@ -70,7 +82,7 @@ function runRenderer() {
   const context = canvas.getContext("2d");
 
   const colorData = getColors(iterationsData, iterationCount);
-  
+
   render(canvas, context, metaData, colorData);
 }
 

@@ -14,6 +14,6 @@ window.addEventListener("load", (event) => {
 
 export function go() {
     run(crosshairCoordinates, zoom);
-    resetZoom();
+    //resetZoom();
     resetLocator();
 }

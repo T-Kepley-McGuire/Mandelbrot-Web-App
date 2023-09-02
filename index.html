@@ -25,6 +25,8 @@
     <script src="slider.js" type="module"></script>
     <script src="readout.js" type="module"></script>
     <script src="colorPicker.js" type="module"></script>
+    <script src="savePicture.js" type="module"></script>
+    <script src="reset.js" type="module"></script>
     <script src="index.js" type="module"></script>
   </head>
 
@@ -66,12 +68,12 @@
             </p>
           </div>
           <div class="buttonless-container color-container control">
-            <input type="color" id="colorcontrol" />
+            <input type="color" id="colorcontrol" value="#00FFFF"/>
             <p>Render Color</p>
           </div>
         </div>
         <div>
-          <button class="btn btn-primary control">Save as Picture</button>
+          <button class="btn btn-primary control" id="download">Save as Picture</button>
           <button class="btn btn-success control ctrl-big" id="go">Go</button>
           <button class="btn btn-secondary control" id="reset">Reset</button>
         </div>

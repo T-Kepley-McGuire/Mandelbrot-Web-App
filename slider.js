@@ -1,4 +1,4 @@
-import { go } from "./index.js";
+
 import { run, setIterationCount } from "./rendererParent.js";
 
 let slider = document.getElementById("iterationslider");
@@ -33,3 +33,10 @@ slider.oninput = function() {
 
     output.innerHTML = Math.round(temp);
 }
+
+export function resetIterations() {
+    maxIterations = 1000;
+    slider.value = mid;
+    output.innerHTML = maxIterations;
+}
+

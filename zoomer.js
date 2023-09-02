@@ -14,4 +14,9 @@ window.addEventListener("load", () => {
 });
 
 export function resetZoom() {
+    let zoomslider = document.getElementById("zoomslider");
+    let output = document.getElementById("zoomdisplay");
+    zoom = 0;
+    zoomslider.value = zoom;
+    output.innerHTML = zoom;
 }
