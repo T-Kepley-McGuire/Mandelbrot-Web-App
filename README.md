@@ -5,6 +5,8 @@ A rendering engine for the Mandelbrot Set built for the web.
 
 Runs locally to calculate and render the Mandelbrot Set using the GPU
 
+[Visit Site](https://t-kepley-mcguire.github.io/Mandelbrot-Web-App/)
+
 ## About
 The Mandelbrot Set is a set of complex numbers that all share an attribute:
 The set is defined in the complex plane as the complex numbers c for which the function f<sub>c</sub>(z)=z<sup>2</sup>+c 
