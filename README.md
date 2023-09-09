@@ -67,11 +67,11 @@ bounding box of the region. If the whole bounding box is within the set, the int
 be part of the set. This avoids calculating the vast amounts of points in the large continents of the set which can tend to
 run up to the maximum number of iterations without going to infinity. As one can imagine, this would get computationally expensive
 quickly and so by sidestepping the majority of those calculations, much work can be avoided. The author has not included
-this optimization in this implimentaiton of the set because it would tend to break the massive parallellization of GPU 
+this optimization in this implementation of the set because it would tend to break the massive parallelization of GPU 
 programming.
 
 Other optimization techniques include edge detection (similar idea to chunking), symmetry utilization (the set is horizontally
-symmetrical, so one only has to calculate one half of the set if the other half is in view), and peturbation theory (the author
+symmetrical, so one only has to calculate one half of the set if the other half is in view), and perturbation  theory (the author
 definitely doesn't know what the heck that is)
 
 ## Implimentation
